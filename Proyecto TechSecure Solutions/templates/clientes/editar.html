@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+
+<h3>✏️ Editar Cliente</h3>
+
+<form method="POST" class="card p-4 shadow">
+
+    <!-- NOMBRE -->
+    <label class="form-label">Nombre</label>
+    <input type="text" name="nombre" value="{{ cliente[1] }}" class="form-control mb-3" required>
+
+    <!-- DIRECCIÓN -->
+    <label class="form-label">Dirección</label>
+    <input type="text" name="direccion" value="{{ cliente[2] }}" class="form-control mb-3" required>
+
+    <!-- TELÉFONO -->
+    <label class="form-label">Teléfono</label>
+    <input type="text" name="telefono" value="{{ cliente[3] }}" class="form-control mb-3">
+
+    <!-- EMAIL -->
+    <label class="form-label">Correo electrónico</label>
+    <input type="email" name="email" value="{{ cliente[4] }}" class="form-control mb-3">
+
+    <!-- BOTONES -->
+    <div class="d-flex gap-2">
+        <button class="btn btn-primary">💾 Actualizar</button>
+        <a href="/clientes" class="btn btn-secondary">⬅ Volver</a>
+    </div>
+
+</form>
+
+</div>
+
+{% endblock %}

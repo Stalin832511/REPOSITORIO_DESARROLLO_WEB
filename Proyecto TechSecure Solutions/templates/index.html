@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>TechSecure Solutions</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-dark bg-dark fixed-top shadow">
+    <div class="container">
+        <img src="{{ url_for('static', filename='img/Imagen_logo_02.jpeg') }}" width="50">
+        <a class="navbar-brand fw-bold ms-2">TechSecure Solutions</a>
+
+        <a href="/login" class="btn btn-primary">Iniciar Sesión</a>
+    </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero-section d-flex align-items-center text-center">
+    <div class="container">
+        <h1 class="text-white fw-bold display-5">
+            Sistema de Gestión Tecnológica
+        </h1>
+        <p class="text-light">
+            Control de ventas, clientes y servicios en un solo lugar
+        </p>
+
+        <a href="/login" class="btn btn-primary btn-lg mt-3">
+            Acceder al Sistema
+        </a>
+    </div>
+</header>
+
+<!-- SERVICIOS -->
+<section class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Nuestros Servicios</h2>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-md-4">
+            <div class="card servicio-card">
+                <img src="{{ url_for('static', filename='img/imagen1.png') }}" class="card-img-top">
+                <div class="card-body">
+                    <h5>Gestión de Clientes</h5>
+                    <p>Administra información completa de clientes.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card servicio-card">
+                <img src="{{ url_for('static', filename='img/imagen2.png') }}" class="card-img-top">
+                <div class="card-body">
+                    <h5>Órdenes de Servicio</h5>
+                    <p>Controla todas las órdenes de manera eficiente.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card servicio-card">
+                <img src="{{ url_for('static', filename='img/imagen3.png') }}" class="card-img-top">
+                <div class="card-body">
+                    <h5>Reportes</h5>
+                    <p>Genera informes y análisis de ventas.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<footer class="bg-dark text-white text-center p-3">
+    © 2026 TechSecure Solutions
+</footer>
+
+</body>
+</html>

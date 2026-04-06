@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <!-- HERO PEQUEÑO -->
+    <div class="card shadow mb-4">
+        <img src="{{ url_for('static', filename='img/Imagen_portada_01.png') }}" 
+             class="img-fluid rounded">
+    </div>
+
+    <!-- OPCIONES -->
+    <div class="row text-center">
+
+        <div class="col-md-3">
+            <a href="/clientes" class="btn btn-primary w-100 p-4">
+                👥 Clientes
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <a href="/ordenes" class="btn btn-success w-100 p-4">
+                📋 Órdenes
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <a href="#" class="btn btn-warning w-100 p-4">
+                📊 Reportes
+            </a>
+        </div>
+
+        <div class="col-md-3">
+            <a href="/" class="btn btn-dark w-100 p-4">
+                🔙 Volver
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

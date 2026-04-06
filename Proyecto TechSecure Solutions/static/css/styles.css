@@ -1,0 +1,19 @@
+:root {
+    --color-primario: #0d6efd;
+    --color-secundario: #0b5ed7;
+}
+
+.hero-section {
+    min-height: 100vh;
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+    url("../img/Imagen_portada_01.png") center/cover no-repeat;
+}
+
+.servicio-card {
+    border-radius: 15px;
+    transition: transform 0.3s;
+}
+
+.servicio-card:hover {
+    transform: translateY(-10px);
+}

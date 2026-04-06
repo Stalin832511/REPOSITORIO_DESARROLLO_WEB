@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-4">
+
+<h3>➕ Nuevo Cliente</h3>
+
+<form method="POST" class="card p-4 shadow">
+
+    <!-- CÉDULA -->
+    <label class="form-label">Cédula</label>
+    <input type="text" name="cedula" class="form-control mb-3" placeholder="Ej: 0102030401" required>
+
+    <!-- NOMBRE -->
+    <label class="form-label">Nombre</label>
+    <input type="text" name="nombre" class="form-control mb-3" placeholder="Nombre completo" required>
+
+    <!-- DIRECCIÓN -->
+    <label class="form-label">Dirección</label>
+    <input type="text" name="direccion" class="form-control mb-3" placeholder="Ej: Av. Amazonas y Colón" required>
+
+    <!-- TELÉFONO -->
+    <label class="form-label">Teléfono</label>
+    <input type="text" name="telefono" class="form-control mb-3" placeholder="Ej: 0991234567">
+
+    <!-- EMAIL -->
+    <label class="form-label">Correo electrónico</label>
+    <input type="email" name="email" class="form-control mb-3" placeholder="Ej: correo@gmail.com">
+
+    <!-- BOTONES -->
+    <div class="d-flex gap-2">
+        <button class="btn btn-success">💾 Guardar</button>
+        <a href="/clientes" class="btn btn-secondary">⬅ Volver</a>
+    </div>
+
+</form>
+
+</div>
+
+{% endblock %}

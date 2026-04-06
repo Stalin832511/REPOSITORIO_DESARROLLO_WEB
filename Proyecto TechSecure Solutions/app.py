@@ -1,51 +1,179 @@
 from flask import Flask, render_template, request, redirect, session, send_file
 from services.orden_service import (
     obtener_ordenes,
-    crear_orden,
-    eliminar_orden,
     obtener_orden,
-    actualizar_orden
+    crear_orden,
+    actualizar_orden,
+    eliminar_orden
 )
-from services.usuario_service import validar_usuario
 
-from reportlab.platypus import SimpleDocTemplate, Table, Paragraph
-from reportlab.lib import colors
+from services.cliente_service import (
+    obtener_clientes,
+    obtener_cliente,
+    crear_cliente,
+    actualizar_cliente,
+    eliminar_cliente
+)
+
+# ✅ PDF
+from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 
 app = Flask(__name__)
-app.secret_key = "clave_secreta"
+app.secret_key = "clave_secreta_123"
 
+
+# ===============================
+# 🌐 LANDING PAGE
+# ===============================
+@app.route('/')
+def inicio():
+    return render_template('index.html')
+
+
+# ===============================
 # 🔐 LOGIN
-@app.route('/', methods=['GET', 'POST'])
+# ===============================
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
+        usuario = request.form['usuario']
         password = request.form['password']
 
-        usuario = validar_usuario(username, password)
-
-        if usuario:
-            session['usuario'] = username
-            return redirect('/inicio')
-        else:
-            return "❌ Usuario incorrecto"
+        if usuario == 'admin' and password == '123':
+            session['usuario'] = usuario
+            return redirect('/dashboard')
 
     return render_template('login.html')
 
-# 🔍 LISTAR
-@app.route('/inicio')
-def inicio():
+
+# ===============================
+# 🔓 LOGOUT
+# ===============================
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/')
+
+
+# ===============================
+# 📊 DASHBOARD
+# ===============================
+@app.route('/dashboard')
+def dashboard():
     if 'usuario' not in session:
-        return redirect('/')
+        return redirect('/login')
+
+    return render_template('dashboard.html')
+
+
+# ======================================================
+# 👥 CLIENTES (CRUD COMPLETO)
+# ======================================================
+
+# LISTAR
+@app.route('/clientes')
+def clientes():
+    if 'usuario' not in session:
+        return redirect('/login')
+
+    lista = obtener_clientes()
+    return render_template('clientes/listar.html', clientes=lista)
+
+
+# CREAR CLIENTE
+@app.route('/clientes/crear', methods=['GET', 'POST'])
+def crear_cliente_view():
+    if 'usuario' not in session:
+        return redirect('/login')
+
+    if request.method == 'POST':
+        crear_cliente(
+            request.form.get('cedula'),
+            request.form.get('nombre'),
+            request.form.get('direccion'),
+            request.form.get('telefono'),
+            request.form.get('email')
+        )
+        return redirect('/clientes')
+
+    return render_template('clientes/crear.html')
+
+
+# EDITAR CLIENTE
+@app.route('/clientes/editar/<cedula>', methods=['GET', 'POST'])
+def editar_cliente_view(cedula):
+    if 'usuario' not in session:
+        return redirect('/login')
+
+    cliente = obtener_cliente(cedula)
+
+    if request.method == 'POST':
+        actualizar_cliente(
+            cedula,
+            request.form.get('nombre'),
+            request.form.get('direccion'),
+            request.form.get('telefono'),
+            request.form.get('email')
+        )
+        return redirect('/clientes')
+
+    return render_template('clientes/editar.html', cliente=cliente)
+
+
+# ELIMINAR CLIENTE
+@app.route('/clientes/eliminar/<cedula>')
+def eliminar_cliente_view(cedula):
+    if 'usuario' not in session:
+        return redirect('/login')
+
+    eliminar_cliente(cedula)
+    return redirect('/clientes')
+
+
+# ======================================================
+# 📄 GENERAR PDF DE CLIENTES
+# ======================================================
+@app.route('/clientes/pdf')
+def clientes_pdf():
+    if 'usuario' not in session:
+        return redirect('/login')
+
+    clientes = obtener_clientes()
+
+    doc = SimpleDocTemplate("clientes.pdf")
+    styles = getSampleStyleSheet()
+
+    contenido = []
+
+    for c in clientes:
+        texto = f"Nombre: {c[1]} | Cédula: {c[0]} | Dirección: {c[2]}"
+        contenido.append(Paragraph(texto, styles["Normal"]))
+
+    doc.build(contenido)
+
+    return send_file("clientes.pdf", as_attachment=True)
+
+
+# ======================================================
+# 📋 ORDENES (CRUD COMPLETO)
+# ======================================================
+
+# LISTAR
+@app.route('/ordenes')
+def listar_ordenes():
+    if 'usuario' not in session:
+        return redirect('/login')
 
     ordenes = obtener_ordenes()
     return render_template('orden_servicio/listar.html', ordenes=ordenes)
 
-# ➕ CREAR
-@app.route('/crear', methods=['GET', 'POST'])
-def crear():
+
+# CREAR
+@app.route('/ordenes/crear', methods=['GET', 'POST'])
+def crear_orden_view():
     if 'usuario' not in session:
-        return redirect('/')
+        return redirect('/login')
 
     if request.method == 'POST':
         crear_orden(
@@ -56,15 +184,16 @@ def crear():
             request.form['cedula'],
             request.form['id_servicio']
         )
-        return redirect('/inicio')
+        return redirect('/ordenes')
 
     return render_template('orden_servicio/crear.html')
 
-# ✏️ EDITAR
-@app.route('/editar/<int:id>', methods=['GET', 'POST'])
-def editar(id):
+
+# EDITAR
+@app.route('/ordenes/editar/<int:id>', methods=['GET', 'POST'])
+def editar_orden_view(id):
     if 'usuario' not in session:
-        return redirect('/')
+        return redirect('/login')
 
     orden = obtener_orden(id)
 
@@ -78,54 +207,23 @@ def editar(id):
             request.form['cedula'],
             request.form['id_servicio']
         )
-        return redirect('/inicio')
+        return redirect('/ordenes')
 
     return render_template('orden_servicio/editar.html', orden=orden)
 
-# ❌ ELIMINAR
-@app.route('/eliminar/<int:id>')
-def eliminar(id):
+
+# ELIMINAR
+@app.route('/ordenes/eliminar/<int:id>')
+def eliminar_orden_view(id):
     if 'usuario' not in session:
-        return redirect('/')
+        return redirect('/login')
 
     eliminar_orden(id)
-    return redirect('/inicio')
+    return redirect('/ordenes')
 
-# 📄 PDF
-@app.route('/reporte')
-def reporte():
-    if 'usuario' not in session:
-        return redirect('/')
 
-    ordenes = obtener_ordenes()
-
-    archivo = "reporte_ordenes.pdf"
-    doc = SimpleDocTemplate(archivo)
-    styles = getSampleStyleSheet()
-
-    elementos = []
-    elementos.append(Paragraph("Reporte de Órdenes de Servicio", styles['Title']))
-
-    data = [["ID","Fecha","Programada","Estado","Cliente","Servicio"]]
-
-    for o in ordenes:
-        data.append([o[0], o[1], o[2], o[3], o[5], o[6]])
-
-    tabla = Table(data)
-    tabla.setStyle([
-        ('GRID',(0,0),(-1,-1),1,colors.black)
-    ])
-
-    elementos.append(tabla)
-    doc.build(elementos)
-
-    return send_file(archivo, as_attachment=True)
-
-# 🔓 LOGOUT
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect('/')
-
+# ===============================
+# 🚀 EJECUTAR
+# ===============================
 if __name__ == '__main__':
     app.run(debug=True)
